@@ -34,10 +34,14 @@ jobs:
           echo " 5. steps: Passos individuais dentro de um job "
           echo ""
           echo " Total de elementos obrigatórios 5 "
+          
       - name: Variáveis e Contexto
         run: |
           echo " == VARIÁVEIS E CONTEXTO == "
           echo " Variáveis env: ${{ env.NODE_VERSION }} "
+          echo " Repositório: ${{ github.repository }} "
+          echo " Branch: ${{ github.ref_name }} "
+          echo " Actor: ${{ github.actor }} "
           echo " 1. env: Definição de variáveis de ambiente "
           echo " 2. contextos Acesso a informações do workflow, job, runner, etc. "
           echo ""
