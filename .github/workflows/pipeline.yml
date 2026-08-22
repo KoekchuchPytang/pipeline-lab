@@ -8,23 +8,23 @@ on:
       - 'src/**'
       - 'README.md'
 
-      jobs:
-        push-job:
-          runs-on: ubuntu-latest
-          
-          steps:
-            - name: Checkout code
-              uses: actions/checkout@v2
+jobs:
+  push-job:
+    runs-on: ubuntu-latest
 
-            - name: Informações do Push
-              run: |
-                echo "Workflow disparado por um push."
-                echo "Commit: ${{ github.sha }}"
-                echo "Autor do Commit: ${{ github.actor }}"
-                echo "Branch: ${{ github.ref_name }}"
-                echo "Repositório: ${{ github.repository }}"
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-            - name: Listar arquivos modificados
-              run: |
-                echo "Arquivos no repositório:"
-                ls -la
+      - name: Informações do Push
+        run: |
+          echo "Workflow disparado por um push."
+          echo "Commit: ${{ github.sha }}"
+          echo "Autor do Commit: ${{ github.actor }}"
+          echo "Branch: ${{ github.ref_name }}"
+          echo "Repositório: ${{ github.repository }}"
+
+      - name: Listar arquivos modificados
+        run: |
+          echo "Arquivos no repositório:"
+          ls -la
