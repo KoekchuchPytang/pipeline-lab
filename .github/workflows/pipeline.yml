@@ -28,9 +28,7 @@ jobs:
         run: |
           echo "Sistema Operacional: ${{ matrix.os }}"
           echo "Versão do Node.js: ${{ matrix.node-version }}"
-          if [ "${{ matrix.experimental }}" == "true" ]; then
-            echo "Modo experimental ativado"
-          fi
+          echo "Teste Experimental: ${{ matrix.experimental }}"
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -57,7 +55,7 @@ jobs:
   collect-results:
     needs: test-matrix
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Coletar resultados
         run: |
