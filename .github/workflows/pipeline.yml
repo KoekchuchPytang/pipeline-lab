@@ -1,87 +1,66 @@
-name: Jobs Paralelos
+name: Matrix Strategy 
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
-  code-analysis:
-    runs-on: ubuntu-latest
+  test-matrix:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        node-version: [16, 18, 20]
+        include:
+          - os: ubuntu-latest
+            node-version: 20
+            experimental: true
+        exclude:
+          - os: windows-latest
+            node-version: 16
     steps:
-      - name: Checkout code
+      - name: Checkout código
         uses: actions/checkout@v4
 
-      - name: Análise de Sintaxe
+      - name: Informações da Matrix
         run: |
-          echo "Analisando a sintaxe do código..."
-          sleep 3
-          echo "Análise de sintaxe concluída."
-
-      - name: Verificar padrões de código
-        run: |
-          echo "Verificando padrões de código..."
-          sleep 3
-          echo "Verificação de padrões concluída."
-        
-      - name: Upload relatório de análise
-        run: |
-         echo "Fazendo upload do relatório..."
-         echo "Relatório de análise gerado em $(date)!" > analysis_report.txt
-         echo "Relatório salvo"
-
-  unit-tests:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Configurar ambiente de teste
-        run: |
-          echo "Configurando ambiente de teste..."
-          sleep 3
-          echo "Ambiente de teste configurado."
-      - name: Executar testes unitários
-        run: |
-          echo "Executando testes unitários..."
-          sleep 3
-          echo "Todos os testes unitários passaram com sucesso (15/15)."
-
-      - name: Gerar relatório de cobertura
-        run: |
-          echo "Gerando relatório de cobertura..."
-          sleep 1
-          echo "Cobertura de teste: 85% (85/100) de linhas cobertas."
-
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Configurar ambiente de build
-        run: |
-          echo "Configurando ambiente de build..."
-          sleep 2
-          echo "Ambiente de build configurado."
-
-      - name: Compilar código
-        run: |
-          echo "Compilando o código..."
-          sleep 3
-          echo "Código compilado com sucesso."
-
-      - name: Gerar artefato de build
-        run: |
-          echo "Gerando artefato de build..."
-          mkdir -p build
-          echo "Artefato de build gerado em $(date)!" > build/app.jar
-          echo "Artefatos gerados"
-
-      - name: Upload artefato de build
-        uses: actions/upload-artifact@v4
+          echo "Sistema Operacional: ${{ matrix.os }}"
+          echo "Versão do Node.js: ${{ matrix.node-version }}"
+          if [ "${{ matrix.experimental }}" == "true" ]; then
+            echo "Modo experimental ativado"
+          fi
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          name: build-artifact
-          path: build/
-          
+          node-version: ${{ matrix.node-version }}
+
+      - name: Verificar versões
+        run: |
+          echo "Versão do Node.js: $(node -v)"
+          echo "Versão do npm: $(npm -v)"
+
+      - name: Executar testes específicos do OS
+        run: |
+          echo "Executando testes no sistema operacional: ${{ matrix.os }} com Node.js versão: ${{ matrix.node-version }} ..."
+          sleep 2
+          echo "Testes concluídos"
+
+      - name: Teste experimental
+        if: ${{ matrix.experimental == 'true' }}
+        run: |
+          echo "Executando testes experimentais..."
+          sleep 1
+          echo "Testes experimentais concluídos"
+        
+  collect-results:
+    needs: test-matrix
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Coletar resultados
+        run: |
+          echo "Coletando resultados dos testes..."
+          sleep 1
+          echo "Resultados coletados"
