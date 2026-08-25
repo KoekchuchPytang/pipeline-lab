@@ -107,12 +107,9 @@ jobs:
 
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
-          pip install safety bandit
-          pip install -r requirements.txt
-
-      - name: Run Safety (Dependency Vulnerability Check)
-        run: safety check
+          python -m pip install --upgrade pip setuptools
+          python -m pip install --upgrade safety bandit
+          python -m pip install -r requirements.txt
 
       - name: Run Bandit (Security Linting)
         run: bandit -r . -f json -o bandit-report.json || true
